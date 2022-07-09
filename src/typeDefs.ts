@@ -38,6 +38,28 @@ export const typeDefs = gql`
     sell_offers: [NFTokenOffer]!
     ipfs: XLS20Schema
   }
+  input XummTx {
+    TransactionType: String!
+    Destination: String!
+    Amount: String!
+    Fee: String!
+  }
+  input XummReturnUrl {
+    web: String
+    mobile: String
+  }
+  input XummOptions {
+    submit: Boolean!
+    expire: Int!
+    return_url: XummReturnUrl!
+  }
+  input XummPayload {
+    txjson: XummTx!
+    options: XummOptions!
+  }
+  type XummPayloadResponse {
+    uuid: String!
+  }
   enum CacheControlScope {
     PUBLIC
     PRIVATE
@@ -50,5 +72,8 @@ export const typeDefs = gql`
   type Query {
     minted_nfts(account: String!, taxon: Int): [AccountNFToken]
     account_nfts(account: String!, taxon: Int): [AccountNFToken]
+  }
+  type Mutation {
+    createPayload(payload: XummPayload!): XummPayloadResponse
   }
 `;

@@ -9,16 +9,6 @@ import {
   gql,
 } from "@apollo/client";
 
-// export type XrplGraphContextProps = {
-//   graph: ApolloClient<NormalizedCacheObject> | undefined;
-//   method: "xrplgraph";
-// };
-
-// const initialState: XrplGraphContextProps = {
-//   graph: undefined,
-//   method: "xrplgraph",
-// };
-
 const initialState = {
   graph: undefined,
   method: 'xrplgraph'
@@ -59,10 +49,6 @@ export function XrplGraphProvider({ children }) {
     </XrplGraphContext.Provider>
   );
 }
-
-// type XrplGraphProviderProps = {
-//   children: ReactNode;
-// };
 
 export const XrpGraphConsumer = XrplGraphContext.Consumer;
 

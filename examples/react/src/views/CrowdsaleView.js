@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router";
 import Page from '../components/Page';
 import Container from '../components/Container';
-// import LoginDrawer from "../../../components/Global/LoginDrawer";
+import XummDialog from '../components/XummDialog';
 
 // import { EthSigner } from "./components";
 
@@ -134,6 +134,8 @@ function CrowdsaleView() {
     owner: 'rAddress',
   }
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Page sx={{ 
       minHeight: '100%',
@@ -145,13 +147,20 @@ function CrowdsaleView() {
       </Container>
       <Container>
         <CrowdsaleDetails
-          onBuy={() => {}}
+          onBuy={() => setIsOpen(true)}
           isSuccess={'Success Message'}
           isError={'Fail Message'}
           offers={[]}
           xls20={xls20}
         />
       </Container>
+      {isOpen && (
+        <XummDialog
+          open={isOpen}
+          onConfirm={() => setIsOpen(false)}
+          onCancel={() => setIsOpen(false)}
+        />
+      )}
     </Page>
   );
 }

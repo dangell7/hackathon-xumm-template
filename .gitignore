@@ -85,6 +85,7 @@ node_modules/
 
 # BUILD files #
 ######################
+/examples/react/build
 /build
 node_modules
 lib

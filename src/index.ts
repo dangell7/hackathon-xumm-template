@@ -19,6 +19,10 @@ import {
   AccountNFToken,
   NFTokenOffer
 } from './types/xrpl';
+import {
+  XummPayload,
+  XummPayloadResponse,
+} from './types/xumm';
 // db
 import {
   g_xrplGraph_pins,
@@ -37,6 +41,7 @@ import {
 import {
   typeDefs,
 } from './typeDefs';
+import { _c_xummPayload } from './services/xumm';
 
 // INIT XRPL
 dotenv.config();
@@ -47,6 +52,22 @@ g_xrplGraph_pins(xrplApi, process.env.XRPL_GRAPH_ACCOUNT);
 xrplApi.connect();
 
 const resolvers = {
+  Mutation: {
+    async createPayload(_: null, payload: { payload: XummPayload | undefined }) {
+      try {
+        console.log(payload);
+        const uuid = await _c_xummPayload(payload.payload);
+        console.log(uuid);
+        
+        const dict = { uuid };
+        return dict as XummPayloadResponse || new ValidationError('Xumm payload not created');
+      } catch (error) {
+        console.log(error.message);
+        
+        throw new ApolloError(error);
+      }
+    },
+  },
   Query: {
     async minted_nfts(_: null, args: { account: string, taxon: number | undefined }) {
       try {
@@ -87,34 +108,6 @@ const resolvers = {
         throw new ApolloError(error);
       }
     },
-    async buy_offers(nftoken: AccountNFToken) {
-      try {
-        return await _g_nftBuyOffers(
-          xrplApi,
-          nftoken.Issuer,
-          nftoken.NFTokenID
-        ) as NFTokenOffer[] || new ValidationError('NFToken Sell Offers not found');
-      } catch (error) {
-        if (error.message === 'The requested object was not found.') {
-          return [];
-        }
-        throw new ApolloError(error);
-      }
-    },
-    async sell_offers(nftoken: AccountNFToken) {
-      try {
-        return await _g_nftSellOffers(
-          xrplApi,
-          nftoken.Issuer,
-          nftoken.NFTokenID
-        ) as NFTokenOffer[] || new ValidationError('NFToken Sell Offers not found');
-      } catch (error) {
-        if (error.message === 'The requested object was not found.') {
-          return [];
-        }
-        throw new ApolloError(error);
-      }
-    }
   }
 };
 
