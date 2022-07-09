@@ -1,0 +1,28 @@
+{
+  "name": "xrplgraph",
+  "author": "https://github.com/Transia-RnD",
+  "version": "0.9.9",
+  "scripts": {
+    "build": "tsc",
+    "serve": "npm run build && node lib/index.js",
+    "start": "node lib/index.js"
+  },
+  "main": "lib/index.js",
+  "devDependencies": {
+    "tslint": "^6.1.3",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.6.8",
+    "@google-cloud/bigquery": "^6.0.1",
+    "@types/node": "^18.0.0",
+    "algoliasearch": "^4.13.1",
+    "apollo-server": "^3.9.0",
+    "axios": "^0.27.2",
+    "cids": "^1.1.9",
+    "dotenv": "^16.0.1",
+    "graphql": "^16.5.0",
+    "whatwg-url": "^11.0.0",
+    "xrpl": "^2.3.0"
+  }
+}
