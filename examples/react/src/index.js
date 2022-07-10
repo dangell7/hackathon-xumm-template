@@ -7,6 +7,8 @@ import { XrplGraphProvider } from './contexts/XrplGraphContext';
 import * as serviceWorker from './serviceWorker';
 import App from './App';
 
+import './index.css';
+
 enableES5();
 
 ReactDOM.render(

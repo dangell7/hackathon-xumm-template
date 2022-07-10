@@ -143,9 +143,6 @@ function CrowdsaleView() {
       paddingBottom: 3
      }} title="Crowdsale">
       <Container>
-        <OnboardXumm />
-      </Container>
-      <Container>
         <CrowdsaleDetails
           onBuy={() => setIsOpen(true)}
           isSuccess={'Success Message'}

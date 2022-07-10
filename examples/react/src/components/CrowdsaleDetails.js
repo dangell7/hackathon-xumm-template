@@ -1,215 +1,81 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Grid,
-  Box,
-  Card,
-  CardMedia,
-  Typography,
-  Button,
-  // SvgIcon,
-  Alert,
-} from "@mui/material";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Grid, Box, Card, CardMedia, Typography, Button, Alert } from '@mui/material';
+import { NumberPicker } from 'react-widgets';
+import '../App.css';
 
-// import ShoppingCartIcon from "@mui/icons/ShoppingCart";
-import Offers from './Offers';
-
-// const useStyles = makeStyles((theme) => ({
-//   root: {},
-//   smallBox: {
-//     height: 75,
-//     width: 75,
-//   },
-//   symbol: {
-//     // height: '100%',
-//     marginRight: -20,
-//     transform: "rotate(-90deg) translateX(-100%)",
-//   },
-//   media: {
-//     height: 75,
-//     backgroundColor: theme.palette.background.dark,
-//   },
-//   largeMedia: {
-//     margin: "auto",
-//     height: 300,
-//     width: "100%",
-//   },
-//   image: {
-//     height: "100%",
-//   },
-//   actionIcon: {
-//     marginRight: theme.spacing(1),
-//   },
-// }));
-
-const BoxArray = ({ price, editions, forSale }) => (
-  <Box display="flex">
-    <Box m={2} style={{ textAlign: "center" }} display="block">
-      <Typography
-        style={{ fontSize: 14, fontWeight: 400 }}
-        color="textSecondary"
-      >
-        Floor price
-      </Typography>
-      <Typography style={{ fontSize: 20, fontWeight: 700 }} color="primary">
-        {`${price}`}
-      </Typography>
-    </Box>
-    <Box m={2} style={{ textAlign: "center" }} display="block">
-      <Typography
-        style={{ fontSize: 14, fontWeight: 400 }}
-        color="textSecondary"
-      >
-        Total Editions
-      </Typography>
-      <Typography style={{ fontSize: 20, fontWeight: 700 }} color="primary">
-        {editions}
-      </Typography>
-    </Box>
-    <Box m={2} style={{ textAlign: "center" }} display="block">
-      <Typography
-        style={{ fontSize: 14, fontWeight: 400 }}
-        color="textSecondary"
-      >
-        Total For Sale
-      </Typography>
-      <Typography style={{ fontSize: 20, fontWeight: 700 }} color="primary">
-        {forSale}
-      </Typography>
-    </Box>
-  </Box>
-);
-
-BoxArray.propTypes = {
-  price: PropTypes.string.isRequired,
-  editions: PropTypes.string.isRequired,
-  forSale: PropTypes.string.isRequired,
-};
-
-function CrowdsaleDetails({
-  className,
-  onBuy,
-  isSuccess,
-  isError,
-  offers,
-  xls20,
-  ...rest
-}) {
-
+function CrowdsaleDetails({ className, onBuy, isSuccess, isError, offers, xls20, ...rest }) {
   return (
-    <Grid
-      container
-      spacing={3}
-      {...rest}
-    >
-      <Grid item lg={6} xs={12}>
-        <Grid container spacing={3}>
-          <Box direction="column">
-            <Typography
-              sx={{
-                marginRight: -20,
-                transform: "rotate(-90deg) translateX(-100%)",
-              }}
-              color="primary">
-              {`# ${parseInt(xls20.currentId, 10) + 1} / ${xls20.maxSupply}`}
-            </Typography>
-          </Box>
-          <Grid item md={10} xs={12} display="block">
-            <Box
-              component={Card}
-              width={1}
-              height={1}
-              display="flex"
-              flexDirection="column"
-            >
-              <CardMedia
-                image={xls20.imageUrl}
-                sx={{
-                  position: "relative",
-                  height: { xs: 240, sm: 340, md: 400 },
-                  overflow: "hidden",
-                }}
-              />
-            </Box>
+    <div className="App">
+      <header className="App-header">
+        <h1>Nicole's Car Fundraiser</h1>
+      </header>
+      <Grid container spacing={2}>
+        <Grid item xs={2}>
+          {' '}
+        </Grid>
+        <Grid item xs={8}>
+          <p>
+            My good friend, Nicole runs a small catering business from her kitchen in Barbados. She cooks food for
+            collection and delivery by foot in her neighbourhood. She had managed to save up for a used car to help grow
+            her business and be able to expand her delivery area. Four days after getting the car, a truck hit her and
+            the car was written off. Luckily she was OK, but the car is beyond repair. As it was so old, and purchased
+            from a family member there is no official valuation and insurance will unlikely pay out anything near the
+            cost of actually replacing it.
+          </p>
+
+          <p>
+            So we are running a fundraiser to buy her another car. We are raffling off a handmade crochet blanket made
+            by my wife.
+          </p>
+        </Grid>
+        <Grid item xs={2}>
+          {' '}
+        </Grid>
+        <Grid item xs={2}>
+          {' '}
+        </Grid>
+        <Grid item xs={4}>
+          <Grid item>
+            <img
+              src="https://raw.githubusercontent.com/hammertoe/nft_raffle/main/images/nicole-souse_small.jpeg"
+              alt="Nicole and food"
+            />
           </Grid>
         </Grid>
-      </Grid>
-      <Grid item md={6} xs={12}>
-        <Grid container spacing={3}>
-          <Grid item md={12} xs={12}>
-            <Box>
-              <Box>
-                <Typography
-                  style={{ marginTop: 5, fontSize: 14, fontWeight: 500 }}
-                  color="primary"
-                >
-                  {xls20.name}
-                </Typography>
-              </Box>
-              <Box mt={2}>
-                <Typography
-                  style={{ fontSize: 24, fontWeight: 550 }}
-                  color="textPrimary"
-                >
-                  {xls20.subname}
-                </Typography>
-              </Box>
-              <Box mt={1}>
-                <Typography
-                  style={{ fontSize: 16, fontWeight: 500 }}
-                  color="textSecondary"
-                >
-                  Issuer:{" "}
-                  <span style={{ fontWeight: 700 }}>{xls20.owner}</span>
-                </Typography>
-              </Box>
-              <Box mt={1}>
-                <Typography
-                  style={{ fontSize: 16, fontWeight: 400 }}
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  {xls20.description}
-                </Typography>
-              </Box>
-              <Box mt={2} display="flex">
-                <BoxArray
-                  price={xls20.currentPrice}
-                  editions={xls20.currentId}
-                  forSale={xls20.maxSupply}
-                  style={{ textAlign: "center" }}
-                />
-              </Box>
-              {isError && (
-                <Box mt={2} display="flex">
-                  <Alert severity="error">
-                    <div>{isError}</div>
-                  </Alert>
-                </Box>
-              )}
-              {isSuccess && (
-                <Box mt={2} display="flex">
-                  <Alert severity="success">
-                    <div>{isSuccess}</div>
-                  </Alert>
-                </Box>
-              )}
-              <Box mt={4}>
-                <Button color="secondary" variant="contained" onClick={onBuy}>
-                  Buy now!
-                </Button>
-              </Box>
-            </Box>
+        <Grid item xs={4}>
+          <Grid item>
+            <img
+              src="https://raw.githubusercontent.com/hammertoe/nft_raffle/main/images/nicole-car-crash_small.jpeg"
+              alt="Nicole's wrecked car"
+            />
           </Grid>
         </Grid>
+        <Grid item xs={2}>
+          {' '}
+        </Grid>
+        <Grid item xs={2}>
+          {' '}
+        </Grid>
+        <Grid item xs={8}>
+          <Grid item>
+            <p>Each ticket is 10 XRP. How many raffle tickets do you want to buy?</p>
+            <p>
+              <NumberPicker defaultValue={1} step={1} max={10} min={1} />
+            </p>
+
+            <p>
+              <Button variant="contained" onClick={onBuy}>
+                Buy tickets
+              </Button>
+            </p>
+          </Grid>
+        </Grid>
+        <Grid item xs={2}>
+          {' '}
+        </Grid>
       </Grid>
-      <Grid item md={12} xs={12}>
-        <Offers
-          offers={offers}
-          collectionDesc={"xls20.metaData.collectionDesc"}
-        />
-      </Grid>
-    </Grid>
+    </div>
   );
 }
 

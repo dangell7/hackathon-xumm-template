@@ -28,7 +28,8 @@
     "react-lazy-load-image-component": "^1.5.4",
     "react-perfect-scrollbar": "^1.5.8",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.0"
+    "react-scripts": "5.0.0",
+    "react-widgets": "^5.8.4"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

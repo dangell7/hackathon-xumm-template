@@ -12,7 +12,7 @@ function track(...args) {
 }
 
 function pageview(props) {
-  track('config', process.env.GA_MEASUREMENT_ID, props);
+  track('config', process.env.REACT_APP_GA_MEASUREMENT_ID, props);
 }
 
 function event(type, props) {

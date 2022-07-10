@@ -26,7 +26,7 @@ export function XrplGraphProvider({ children }) {
     const connectToNetwork = async () => {
       const client = new ApolloClient({
         uri: "http://localhost:4000",
-        // uri: httpProvider,
+        // uri: process.env.REACT_APP_BASE_SERVER_URI,
         cache: new InMemoryCache(),
       });
       setClient(client);
