@@ -4,7 +4,7 @@ export const getNFTOffers = async (xrpl, address) => {
     account: address,
     ledger_index: 'validated',
     type: 'nft_offer',
-    limit: 10,
+    limit: 1000,
   });
   console.log(response.result.account_objects);
   return response.result.account_objects;
