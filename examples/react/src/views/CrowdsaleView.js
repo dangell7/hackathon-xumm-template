@@ -174,7 +174,7 @@ function CrowdsaleView() {
                 </p>
 
                 <p>
-                  <Button variant="contained" onClick={() => handlePurchase()}>
+                  <Button variant="contained" disabled={offers.length > 0 || pending} onClick={() => handlePurchase()}>
                     Buy tickets
                   </Button>
                 </p>
