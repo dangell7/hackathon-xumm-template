@@ -93,6 +93,12 @@ function CrowdsaleView() {
     setAcceptTx(tx);
   };
 
+  const handleClaimSuccess = () => {
+    getAccountOffers();
+    setPending(true);
+    setAcceptTx(null);
+  };
+
   return (
     <Page
       sx={{
@@ -198,7 +204,7 @@ function CrowdsaleView() {
           open
           header="Receive Raffle Tickets"
           tx={acceptTx}
-          onConfirm={() => setAcceptTx(null)}
+          onConfirm={handleClaimSuccess}
           onCancel={() => setAcceptTx(null)}
         />
       )}
