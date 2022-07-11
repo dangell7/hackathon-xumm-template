@@ -166,10 +166,11 @@ function CrowdsaleView() {
                 <p>Each ticket is 10 XRP. How many raffle tickets do you want to buy?</p>
                 <p>
                   <TextField 
-                    type="number" 
+                    type="number"
                     value={numTickets} 
                     InputProps={{ inputProps: { step: 1, min: 1, max: 10 } }}
                     onChange={handleChange}
+                    disabled={offers.length > 0 || pending}
                   />
                 </p>
 
