@@ -9,7 +9,7 @@ import useIsMountedRef from '../hooks/useIsMountedRef';
 // import { isMobileAndTablet } from '../../utils/isMobileAndTablet';
 
 const CREATE_PAYLOAD = gql`
-  mutation CreatePayload($payload: XummPayload!) {
+  mutation CreatePayload($payload: XummAppPayload!) {
     createPayload(payload: $payload) {
       uuid
     }

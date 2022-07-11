@@ -1,161 +1,159 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router";
+import React, { useCallback, useState, useEffect } from 'react';
+import { Grid, Box, Card, CardMedia, Typography, Button, Alert, TextField } from '@mui/material';
+import '../App.css';
+import {
+  xrpToDrops
+} from 'xrpl';
+
 import Page from '../components/Page';
 import Container from '../components/Container';
 import XummDialog from '../components/XummDialog';
 
-// import { EthSigner } from "./components";
+import useXrpl from '../hooks/useXrpl';
 
-import OnboardXumm from '../components/OnboardXumm';
-import CrowdsaleDetails from '../components/CrowdsaleDetails';
-
-import useIsMountedRef from '../hooks/useIsMountedRef';
-// import useEthereum from "../../../hooks/useEthereum";
-// import useIpfs from "../../../hooks/useIpfs";
-
-// const useStyles = makeStyles((theme) => ({
-//   root: {
-//     minHeight: '100%',
-//     paddingTop: theme.spacing(3),
-//     paddingBottom: theme.spacing(3)
-//   }
-// }));
+import { 
+  getNFTOffers
+} from '../services/xrpl/services';
 
 function CrowdsaleView() {
-  // const classes = useStyles();
-  const isMountedRef = useIsMountedRef();
-  // const { contractAddress } = useParams();
+  const { xrpl } = useXrpl();
 
-  // const tokenId = Boolean(new URLSearchParams(search).get("tokenId")) || null;
-
-  // const [slr721, setSLR721] = useState(null);
-  // const [offers, setOffers] = useState([]);
-  // const [isSuccess, setIsSuccess] = useState(null);
-  // const [isError, setIsError] = useState(null);
-
-  // const parseEvent = (event) => ({
-  //   address: event.returnValues.payer,
-  //   tokenId: event.returnValues.tokenId,
-  //   price: web3.utils.fromWei(`${event.returnValues.price}`, "ether"),
-  //   timestamp: event.returnValues.timestamp,
-  // });
-
-  // const listenEvents = (contract) => {
-  //   contract.events
-  //     .Holder({
-  //       fromBlock: 0,
-  //     })
-  //     .on("connected", () => {
-  //       console.log("CONNECTED");
-  //     })
-  //     .on("data", async (event) => {
-  //       console.log("DATA");
-  //       const r = parseEvent(event);
-  //       setOffers((prevOffers) => [...prevOffers, r]);
-  //       const c = await getSLR721Contract(
-  //         ipfs,
-  //         web3,
-  //         contractAddress,
-  //         r.tokenId
-  //       );
-  //       setSLR721(c);
-  //     })
-  //     .on("error", (error) => {
-  //       console.log("ERROR");
-  //       console.log(error);
-  //       setIsError(error.message);
-  //     });
-  // };
-
-  // const getBlockchainNft = useCallback(async () => {
-  //   if (isMountedRef.current) {
-  //     try {
-  //       const c = await getSLR721ContractInstance(web3, contractAddress);
-  //       listenEvents(c);
-  //       const contract = await getSLR721Contract(
-  //         ipfs,
-  //         web3,
-  //         contractAddress,
-  //         0
-  //       );
-  //       setSLR721(contract);
-  //     } catch (error) {
-  //       setIsError(error.message);
-  //     }
-  //   }
-  // }, [isMountedRef]);
-
-  // useEffect(() => {
-  //   getBlockchainNft();
-  // }, [getBlockchainNft]);
-
-  // // Action
-  // const [actionModal, setActionModal] = useState({
-  //   open: false,
-  //   tx: null,
-  // });
-  // const [login, setLogin] = useState(false);
-  // const handleBuy = async () => {
-  //   if (!web3.currentProvider.selectedAddress) {
-  //     setLogin(true);
-  //     return;
-  //   }
-  //   try {
-  //     const tx = {};
-  //     tx.to = slr721.address;
-  //     tx.from = web3.currentProvider.selectedAddress;
-  //     tx.amount = 1;
-  //     tx.value = slr721.currentPrice;
-  //     const preparedTx = await prepareSLR721Tx(web3, "buy", tx);
-  //     setActionModal({ open: true, tx: preparedTx });
-  //   } catch (error) {
-  //     setIsError(error.message);
-  //   }
-  // };
-
-  // const handleSubmit = async () => {
-  //   setActionModal({ open: true, tx: null });
-  //   setIsSuccess("Successful Purchase");
-  //   setIsError(false);
-  // };
-
-  // if (!slr721) {
-  //   return null;
-  // }
-
-  const xls20 = {
-    currentId: 0,
-    maxSupply: 100,
-    currentPrice: 10,
-    imageUrl: 'https://ipfs.io/ipfs/bafkreigtjbmwxkbaj4gnesjbq7yzwyat5xgg5wrjusymxvb4ratkdtylci',
-    name: 'Name',
-    subname: 'Some Sub Name',
-    description: 'Some Description',
-    owner: 'rAddress',
+  const [numTickets, setNumTickets] = useState(1);
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setNumTickets(value);
   }
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [purchaseTx, setPurchaseTx] = useState(null);
+  const handlePurchase = () => {
+    const tx = {
+      TransactionType: 'Payment',
+      Destination: process.env.REACT_APP_XRPL_GRAPH_ACCOUNT,
+      Amount: xrpToDrops(numTickets * 10),
+      Fee: '20000',
+    };
+    setPurchaseTx(tx);
+  }
+
+  const [acceptTx, setAcceptTx] = useState(null);
+  const handlePurchaseSuccess = async (data) => {
+    const account = data.account;
+    localStorage.setItem("account", data.account);
+    const sellHash = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT, data.account);
+    const tx = {
+      TransactionType: 'NFTokenAcceptOffer',
+      NFTokenSellOffer: sellHash,
+      Fee: '12000',
+    };
+    setAcceptTx(tx);
+  }
+
+  const handleAcceptSuccess = (data) => {
+    setAcceptTx(null);
+  }
 
   return (
-    <Page sx={{ 
-      minHeight: '100%',
-      paddingTop: 3,
-      paddingBottom: 3
-     }} title="Crowdsale">
+    <Page
+      sx={{
+        minHeight: '100%',
+        paddingTop: 3,
+        paddingBottom: 3,
+      }}
+      title="Crowdsale"
+    >
       <Container>
-        <CrowdsaleDetails
-          onBuy={() => setIsOpen(true)}
-          isSuccess={'Success Message'}
-          isError={'Fail Message'}
-          offers={[]}
-          xls20={xls20}
-        />
+        <div className="App">
+          <header className="App-header">
+            <h1>Nicole's Car Fundraiser</h1>
+          </header>
+          <Grid container spacing={2}>
+            <Grid item xs={2}>
+              {' '}
+            </Grid>
+            <Grid item xs={8}>
+              <p>
+                My good friend, Nicole runs a small catering business from her kitchen in Barbados. She cooks food for
+                collection and delivery by foot in her neighbourhood. She had managed to save up for a used car to help
+                grow her business and be able to expand her delivery area. Four days after getting the car, a truck hit
+                her and the car was written off. Luckily she was OK, but the car is beyond repair. As it was so old, and
+                purchased from a family member there is no official valuation and insurance will unlikely pay out
+                anything near the cost of actually replacing it.
+              </p>
+
+              <p>
+                So we are running a fundraiser to buy her another car. We are raffling off a handmade crochet blanket
+                made by my wife.
+              </p>
+            </Grid>
+            <Grid item xs={2}>
+              {' '}
+            </Grid>
+            <Grid item xs={2}>
+              {' '}
+            </Grid>
+            <Grid item xs={4}>
+              <Grid item>
+                <img
+                  src="https://raw.githubusercontent.com/hammertoe/nft_raffle/main/images/nicole-souse_small.jpeg"
+                  alt="Nicole and food"
+                />
+              </Grid>
+            </Grid>
+            <Grid item xs={4}>
+              <Grid item>
+                <img
+                  src="https://raw.githubusercontent.com/hammertoe/nft_raffle/main/images/nicole-car-crash_small.jpeg"
+                  alt="Nicole's wrecked car"
+                />
+              </Grid>
+            </Grid>
+            <Grid item xs={2}>
+              {' '}
+            </Grid>
+            <Grid item xs={2}>
+              {' '}
+            </Grid>
+            <Grid item xs={8}>
+              <Grid item>
+                <p>Each ticket is 10 XRP. How many raffle tickets do you want to buy?</p>
+                <p>
+                  <TextField 
+                    type="number" 
+                    value={numTickets} 
+                    InputProps={{ inputProps: { step: 1, min: 1, max: 10 } }}
+                    onChange={handleChange}
+                  />
+                </p>
+
+                <p>
+                  <Button variant="contained" onClick={() => handlePurchase()}>
+                    Buy tickets
+                  </Button>
+                </p>
+              </Grid>
+            </Grid>
+            <Grid item xs={2}>
+              {' '}
+            </Grid>
+          </Grid>
+        </div>
       </Container>
-      {isOpen && (
+      {purchaseTx && (
+        <XummDialog 
+          open
+          header="Purchase Raffle Tickets"
+          tx={purchaseTx}
+          onConfirm={handlePurchaseSuccess}
+          onCancel={() => setPurchaseTx(null)}
+        />
+      )}
+      {acceptTx && (
         <XummDialog
-          open={isOpen}
-          onConfirm={() => setIsOpen(false)}
-          onCancel={() => setIsOpen(false)}
+          open
+          header="Receive Raffle Tickets"
+          tx={acceptTx}
+          onConfirm={handleAcceptSuccess}
+          onCancel={() => setPurchaseTx(null)}
         />
       )}
     </Page>

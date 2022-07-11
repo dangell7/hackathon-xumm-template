@@ -40,9 +40,10 @@ export const typeDefs = gql`
   }
   input XummTx {
     TransactionType: String!
-    Destination: String!
-    Amount: String!
+    Destination: String
+    Amount: String
     Fee: String!
+    NFTokenSellOffer: String
   }
   input XummReturnUrl {
     web: String
@@ -53,12 +54,16 @@ export const typeDefs = gql`
     expire: Int!
     return_url: XummReturnUrl!
   }
-  input XummPayload {
+  input XummAppPayload {
     txjson: XummTx!
     options: XummOptions!
   }
   type XummPayloadResponse {
     uuid: String!
+  }
+  type XummBlobResponse {
+    txid: String!
+    account: String!
   }
   enum CacheControlScope {
     PUBLIC
@@ -70,10 +75,11 @@ export const typeDefs = gql`
     inheritMaxAge: Boolean
   ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
   type Query {
+    getPayload(payloadId: String!): XummBlobResponse
     minted_nfts(account: String!, taxon: Int): [AccountNFToken]
     account_nfts(account: String!, taxon: Int): [AccountNFToken]
   }
   type Mutation {
-    createPayload(payload: XummPayload!): XummPayloadResponse
+    createPayload(payload: XummAppPayload!): XummPayloadResponse
   }
 `;

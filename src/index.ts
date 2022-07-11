@@ -20,8 +20,9 @@ import {
   NFTokenOffer
 } from './types/xrpl';
 import {
-  XummPayload,
+  XummAppPayload,
   XummPayloadResponse,
+  XummBlobResponse,
 } from './types/xumm';
 // db
 import {
@@ -41,7 +42,7 @@ import {
 import {
   typeDefs,
 } from './typeDefs';
-import { _c_xummPayload } from './services/xumm';
+import { _c_xummPayload, _g_xummBlob } from './services/xumm';
 
 // INIT XRPL
 dotenv.config();
@@ -53,7 +54,7 @@ xrplApi.connect();
 
 const resolvers = {
   Mutation: {
-    async createPayload(_: null, payload: { payload: XummPayload | undefined }) {
+    async createPayload(_: null, payload: { payload: XummAppPayload | undefined }) {
       try {
         console.log(payload);
         const uuid = await _c_xummPayload(payload.payload);
@@ -69,6 +70,15 @@ const resolvers = {
     },
   },
   Query: {
+    async getPayload(_: null, args: { payloadId: string }) {
+      try {
+        return await _g_xummBlob(
+          args.payloadId,
+        ) as XummBlobResponse || new ValidationError('Xumm Payload not found');
+      } catch (error) {
+        throw new ApolloError(error);
+      }
+    },
     async minted_nfts(_: null, args: { account: string, taxon: number | undefined }) {
       try {
         const filter: AccountNFTFilter = {

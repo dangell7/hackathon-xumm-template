@@ -1,66 +1,26 @@
-import React, { useCallback, useState, useEffect } from 'react';
-// import { useSnackbar } from 'notistack';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid, Box, Dialog, Typography } from '@mui/material';
 
 import XummGuestConfirmation from './XummGuestConfirmation';
-import useIsMountedRef from '../hooks/useIsMountedRef';
 
-function XummDialog({ onConfirm, onCancel, open, ...rest }) {
-  // const classes = useStyles();
-  const isMountedRef = useIsMountedRef();
-  // const { enqueueSnackbar } = useSnackbar();
-
-  const [preparedTx, setPreparedTx] = useState(null);
-  const onOpened = useCallback(async () => {
-    if (isMountedRef.current) {
-      const tx = {
-        TransactionType: 'Payment',
-        Destination: process.env.REACT_APP_XRPL_GRAPH_ACCOUNT,
-        Amount: '10',
-        Fee: '10',
-      };
-      setPreparedTx(tx);
-    }
-  }, [isMountedRef]);
-
-  useEffect(() => {
-    onOpened();
-  }, [onOpened]);
-
-  const handleSubmit = async (signedTx) => {
-    try {
-      console.log('SUCCESS');
-      // enqueueSnackbar('Tx Complete', {
-      //   variant: 'success',
-      // });
-    } catch (error) {
-      console.log(error);
-      // enqueueSnackbar(error.message, {
-      //   variant: 'error',
-      // });
-    }
-  };
-
-  if (!preparedTx) {
-    return null;
-  }
+function XummDialog({ open, header, tx, onConfirm, onCancel }) {
 
   return (
-    <Dialog maxWidth="sm" fullWidth onClose={onCancel} open={open} {...rest}>
+    <Dialog maxWidth="sm" fullWidth onClose={onCancel} open={open}>
       {/* Dialog renders its body even if not open */}
       {open && (
         <>
           <Box p={3} display="flex" style={{ margin: 'auto' }}>
-            <Typography variant="h4">Purchase Crowdsale</Typography>
+            <Typography variant="h4">{header}</Typography>
           </Box>
           <Grid container>
             <Grid item xs={12} md={12}>
               <Box p={3}>
                 <XummGuestConfirmation 
-                  transaction={preparedTx} 
+                  transaction={tx} 
                   onBack={onCancel} 
-                  onComplete={handleSubmit} 
+                  onComplete={onConfirm} 
                 />
               </Box>
             </Grid>
@@ -72,15 +32,19 @@ function XummDialog({ onConfirm, onCancel, open, ...rest }) {
 }
 
 XummDialog.defaultProps = {
+  open: false,
+  header: null,
+  tx: null,
   onConfirm: () => {},
   onCancel: () => {},
-  open: false,
 };
 
 XummDialog.propTypes = {
-  onConfirm: PropTypes.func,
-  onCancel: PropTypes.func,
   open: PropTypes.bool,
+  header: PropTypes.string,
+  tx: PropTypes.object,
+  onConfirm: PropTypes.func,
+  onCancel: PropTypes.func
 };
 
 export default XummDialog;

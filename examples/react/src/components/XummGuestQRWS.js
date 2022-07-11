@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Box, CardMedia, Alert } from '@mui/material';
+import { useLazyQuery, gql } from '@apollo/client';
 
-import { xummGuestBlob } from '../services/xumm/services';
-
-// const useStyles = makeStyles((theme) => ({
-//   media: {
-// height: 200,
-// width: 200,
-// margin: 'auto',
-// backgroundColor: theme.palette.background.dark
-//   },
-// }));
+const GET_XUMM_BLOB = gql`
+  query GetPayload($payloadId: String!) {
+    getPayload(payloadId: $payloadId) {
+      txid
+      account
+    }
+  }
+`;
 
 function XummGuestQRWS({ payloadId, onSignSuccess }) {
-  // const classes = useStyles();
   const [isPaused, setPause] = useState(false);
   const ws = useRef(null);
+
+  const [getPayload, { loading, error, data }] = useLazyQuery(GET_XUMM_BLOB);
 
   useEffect(() => {
     ws.current = new WebSocket(`wss://xumm.app/sign/${payloadId}`);
@@ -45,8 +45,8 @@ function XummGuestQRWS({ payloadId, onSignSuccess }) {
       }
       if ('signed' in result) {
         setSigned(result.signed);
-        // const response = await getBlob(result.payload_uuidv4);
-        onSignSuccess("response");
+        const response = await getPayload({ variables: { payloadId: result.payload_uuidv4 } });
+        onSignSuccess(response.data);
       }
       if ('expired' in result) {
         setExpired(result.expired);
