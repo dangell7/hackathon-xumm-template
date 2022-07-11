@@ -94,9 +94,9 @@ function CrowdsaleView() {
   };
 
   const handleClaimSuccess = () => {
-    getAccountOffers();
     setPending(true);
     setAcceptTx(null);
+    getAccountOffers();
   };
 
   return (
