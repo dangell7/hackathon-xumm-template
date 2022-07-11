@@ -1,4 +1,4 @@
-export const getNFTOffers = async (xrpl, address, account) => {
+export const getNFTOffers = async (xrpl, address) => {
   const response = await xrpl.request({
     command: 'account_objects',
     account: address,
@@ -6,9 +6,6 @@ export const getNFTOffers = async (xrpl, address, account) => {
     type: 'nft_offer',
     limit: 10,
   });
-  const offers = response.result.account_objects.filter((offer) => offer.Destination === account);
-  if (offers.length === 0) {
-    throw Error('Account does not have a pending offer');
-  }
-  return offers[0].index;
+  console.log(response.result.account_objects);
+  return response.result.account_objects;
 };

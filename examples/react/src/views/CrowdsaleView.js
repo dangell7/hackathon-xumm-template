@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Grid, Box, Card, CardMedia, Typography, Button, Alert, TextField } from '@mui/material';
+import { Grid, Box, Button, TextField } from '@mui/material';
 import '../App.css';
 import {
   xrpToDrops
@@ -8,7 +8,9 @@ import {
 import Page from '../components/Page';
 import Container from '../components/Container';
 import XummDialog from '../components/XummDialog';
+import UnclaimedTickets from '../components/UnclaimedTickets';
 
+import useIsMountedRef from '../hooks/useIsMountedRef';
 import useXrpl from '../hooks/useXrpl';
 
 import { 
@@ -16,7 +18,10 @@ import {
 } from '../services/xrpl/services';
 
 function CrowdsaleView() {
+  const isMountedRef = useIsMountedRef();
   const { xrpl } = useXrpl();
+
+  const [isError, setIsError] = useState(null);
 
   const [numTickets, setNumTickets] = useState(1);
   const handleChange = (e) => {
@@ -35,21 +40,31 @@ function CrowdsaleView() {
     setPurchaseTx(tx);
   }
 
+  const [offers, settOffers] = useState([]);
+  const getOffers = useCallback(async () => {
+    if (isMountedRef.current) {
+      try {
+        const o = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT);
+        settOffers(o);
+      } catch (error) {
+        console.log(error.message);
+        setIsError(error.message);
+      }
+    }
+  }, [isMountedRef]);
+
+  useEffect(() => {
+    getOffers();
+  }, [getOffers]);
+
   const [acceptTx, setAcceptTx] = useState(null);
-  const handlePurchaseSuccess = async (data) => {
-    const account = data.account;
-    localStorage.setItem("account", data.account);
-    const sellHash = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT, data.account);
+  const handleClaim = (sellHash) => {
     const tx = {
       TransactionType: 'NFTokenAcceptOffer',
       NFTokenSellOffer: sellHash,
       Fee: '12000',
     };
     setAcceptTx(tx);
-  }
-
-  const handleAcceptSuccess = (data) => {
-    setAcceptTx(null);
   }
 
   return (
@@ -59,7 +74,7 @@ function CrowdsaleView() {
         paddingTop: 3,
         paddingBottom: 3,
       }}
-      title="Crowdsale"
+      title="Raffle Fundraiser"
     >
       <Container>
         <div className="App">
@@ -130,10 +145,10 @@ function CrowdsaleView() {
                     Buy tickets
                   </Button>
                 </p>
+                <Box pt={3} m={2}>
+                  <UnclaimedTickets offers={offers} onOffer={handleClaim} />
+                </Box>
               </Grid>
-            </Grid>
-            <Grid item xs={2}>
-              {' '}
             </Grid>
           </Grid>
         </div>
@@ -143,7 +158,7 @@ function CrowdsaleView() {
           open
           header="Purchase Raffle Tickets"
           tx={purchaseTx}
-          onConfirm={handlePurchaseSuccess}
+          onConfirm={() => setPurchaseTx(null)}
           onCancel={() => setPurchaseTx(null)}
         />
       )}
@@ -152,8 +167,8 @@ function CrowdsaleView() {
           open
           header="Receive Raffle Tickets"
           tx={acceptTx}
-          onConfirm={handleAcceptSuccess}
-          onCancel={() => setPurchaseTx(null)}
+          onConfirm={() => setAcceptTx(null)}
+          onCancel={() => setAcceptTx(null)}
         />
       )}
     </Page>

@@ -29,6 +29,10 @@ export function XrplProvider({ children }) {
     connectToNetwork();
   }, [httpProvider]);
 
+  if (!client) {
+    return null;
+  }
+
   return (
     <XrplContext.Provider
       value={{
