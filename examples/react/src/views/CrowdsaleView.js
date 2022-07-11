@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Grid, Box, Button, TextField } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import '../App.css';
 import {
   xrpToDrops
@@ -30,6 +31,7 @@ function CrowdsaleView() {
   }
 
   const [purchaseTx, setPurchaseTx] = useState(null);
+  const [pending, setPending] = useState(false);
   const handlePurchase = () => {
     const tx = {
       TransactionType: 'Payment',
@@ -43,6 +45,7 @@ function CrowdsaleView() {
   const handlePurchaseSuccess = (data) => {
     localStorage.setItem("account", data.account);
     setPurchaseTx(null);
+    setPending(true);
   };
 
   const getAccountOffers = async () => {
@@ -52,6 +55,7 @@ function CrowdsaleView() {
         const account = localStorage.getItem("account");
         const o = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT);
         setOffers(o.filter((of) => of.Destination === account));
+        setPending(false);
       }
       setTimeout(callback, 4000);
       const account = localStorage.getItem("account");
@@ -168,7 +172,12 @@ function CrowdsaleView() {
                   </Button>
                 </p>
                 <Box pt={3} m={2}>
-                  {offers.length > 0 && (<UnclaimedTickets offers={offers} onOffer={handleClaim} />)}
+                  {pending && (
+                    <Box sx={{ justifyContent: 'center', display: 'flex' }}>
+                      <CircularProgress />
+                    </Box>
+                  )}
+                  {offers.length > 0 && !pending && (<UnclaimedTickets offers={offers} onOffer={handleClaim} />)}
                 </Box>
               </Grid>
             </Grid>
