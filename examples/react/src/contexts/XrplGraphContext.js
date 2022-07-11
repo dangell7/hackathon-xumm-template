@@ -21,12 +21,14 @@ export function XrplGraphProvider({ children }) {
 
   const [client, setClient] = useState(undefined);
 
+  console.log(process.env.REACT_APP_BASE_SERVER_URI);
+
   useEffect(() => {
     // Connect to network
     const connectToNetwork = async () => {
       const client = new ApolloClient({
-        uri: "http://localhost:4000",
-        // uri: process.env.REACT_APP_BASE_SERVER_URI,
+        // uri: "http://localhost:4000",
+        uri: process.env.REACT_APP_BASE_SERVER_URI,
         cache: new InMemoryCache(),
       });
       setClient(client);
