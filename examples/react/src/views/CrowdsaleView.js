@@ -46,6 +46,7 @@ function CrowdsaleView() {
     localStorage.setItem("account", data.account);
     setPurchaseTx(null);
     setPending(true);
+    setNumTickets(1);
   };
 
   const getAccountOffers = async () => {
