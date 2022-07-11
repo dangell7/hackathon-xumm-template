@@ -153,7 +153,7 @@ function CrowdsaleView() {
                   </Button>
                 </p>
                 <Box pt={3} m={2}>
-                  <UnclaimedTickets offers={offers} onOffer={handleClaim} />
+                  {offers.length > 0 && (<UnclaimedTickets offers={offers} onOffer={handleClaim} />)}
                 </Box>
               </Grid>
             </Grid>
