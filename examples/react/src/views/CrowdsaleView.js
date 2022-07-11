@@ -15,7 +15,7 @@ import useXrpl from '../hooks/useXrpl';
 
 import { 
   getNFTOffers
-} from '../services/xrpl/services';
+} from '../services/xrpl';
 
 function CrowdsaleView() {
   const isMountedRef = useIsMountedRef();
@@ -42,23 +42,38 @@ function CrowdsaleView() {
 
   const handlePurchaseSuccess = (data) => {
     localStorage.setItem("account", data.account);
-    getOffers();
     setPurchaseTx(null);
+  };
+
+  const getAccountOffers = async () => {
+    try {
+      const callback = async () => {
+        console.log('WAITING...');
+        const account = localStorage.getItem("account");
+        const o = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT);
+        setOffers(o.filter((of) => of.Destination === account));
+      }
+      setTimeout(callback, 4000);
+      const account = localStorage.getItem("account");
+      const o = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT);
+      setOffers(o.filter((of) => of.Destination === account));
+    } catch (error) {
+      console.log(error.message);
+      setIsError(error.message);
+    }
   };
 
   const [offers, setOffers] = useState([]);
   const getOffers = useCallback(async () => {
     if (isMountedRef.current && localStorage.getItem("account")) {
       try {
-        const account = localStorage.getItem("account");
-        const o = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT);
-        setOffers(o.filter((of) => of.Destination === account));
+        getAccountOffers();
       } catch (error) {
         console.log(error.message);
         setIsError(error.message);
       }
     }
-  }, [isMountedRef]);
+  }, [isMountedRef, purchaseTx]);
 
   useEffect(() => {
     getOffers();

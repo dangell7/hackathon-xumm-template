@@ -24,7 +24,7 @@ function UnclaimedTickets({ offers, onOffer }) {
         <TableBody>
           {offers.map((offer) => (
             <TableRow
-              key={offer.Destination}
+              key={offer.NFTokenID}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="offer">
