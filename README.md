@@ -52,3 +52,13 @@ yarn run start
 
 gcloud config configurations activate metaxrplorer
 gcloud builds submit
+
+gcloud config configurations activate metaxrplorer \
+&& docker build -t gcr.io/metaxrplorer/xrplgraph-server . -f Dockerfile \
+&& docker push gcr.io/metaxrplorer/xrplgraph-server \
+&& gcloud beta run deploy xrplgraph-server \
+--image=gcr.io/metaxrplorer/xrplgraph-server:latest \
+--platform=managed \
+--region=us-central1 \
+--project=metaxrplorer \
+--service-account=firebase-adminsdk-3o0ju@metaxrplorer.iam.gserviceaccount.com

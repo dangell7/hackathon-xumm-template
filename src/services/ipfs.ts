@@ -79,10 +79,10 @@ export const _g_ipfs = async (uri: string) => {
   console.log('[IPFS] FETCHING IPFS');
   const ipfsURI = convertHexToString(uri);
   if (ipfsURI.split('://').at(0) !== 'ipfs' || ipfsURI === 'ipfs://') {
-    return null;
+    throw Error('Invalid IPFS Format');
   }
   const cidString = ipfsURI.split('ipfs://').at(-1);
-  const ipfsResponse = getIPFS(cidString)
+  const ipfsResponse = getIPFS(cidString);
   const ipfsData = ipfsResponse as unknown as XLS20Schema | undefined;
   return ipfsData;
 }
