@@ -38,14 +38,21 @@ function CrowdsaleView() {
       Fee: '20000',
     };
     setPurchaseTx(tx);
-  }
+  };
 
-  const [offers, settOffers] = useState([]);
+  const handlePurchaseSuccess = (data) => {
+    localStorage.setItem("account", data.account);
+    getOffers();
+    setPurchaseTx(null);
+  };
+
+  const [offers, setOffers] = useState([]);
   const getOffers = useCallback(async () => {
-    if (isMountedRef.current) {
+    if (isMountedRef.current && localStorage.getItem("account")) {
       try {
+        const account = localStorage.getItem("account");
         const o = await getNFTOffers(xrpl, process.env.REACT_APP_XRPL_GRAPH_ACCOUNT);
-        settOffers(o);
+        setOffers(o.filter((of) => of.Destination === account));
       } catch (error) {
         console.log(error.message);
         setIsError(error.message);
@@ -65,7 +72,7 @@ function CrowdsaleView() {
       Fee: '12000',
     };
     setAcceptTx(tx);
-  }
+  };
 
   return (
     <Page
@@ -158,7 +165,7 @@ function CrowdsaleView() {
           open
           header="Purchase Raffle Tickets"
           tx={purchaseTx}
-          onConfirm={() => setPurchaseTx(null)}
+          onConfirm={handlePurchaseSuccess}
           onCancel={() => setPurchaseTx(null)}
         />
       )}

@@ -6,6 +6,6 @@ export const getNFTOffers = async (xrpl, address) => {
     type: 'nft_offer',
     limit: 1000,
   });
-  console.log(response.result.account_objects);
-  return response.result.account_objects;
+  const cleanOffers = response.result.account_objects.filter((a) => a.Destination !== null);
+  return cleanOffers.sort((a, b) => a.PreviousTxnLgrSeq > b.PreviousTxnLgrSeq);
 };

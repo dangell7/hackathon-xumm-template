@@ -46,7 +46,7 @@ function XummGuestQRWS({ payloadId, onSignSuccess }) {
       if ('signed' in result) {
         setSigned(result.signed);
         const response = await getPayload({ variables: { payloadId: result.payload_uuidv4 } });
-        onSignSuccess(response.data);
+        onSignSuccess(response.data.getPayload);
       }
       if ('expired' in result) {
         setExpired(result.expired);

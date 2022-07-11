@@ -54,9 +54,6 @@ function XummGuestConfirmation({ transaction, onComplete, onBack }) {
     startConfimation();
   }, [startConfimation]);
 
-  console.log(error);
-  console.log(data);
-
   if (!data || !data.createPayload) {
     return null
   }
